@@ -49,12 +49,8 @@ barternet/
 │   │   ├── context/            # React context (wallet, etc.)
 │   │   └── test/               # Frontend test setup
 │   └── package.json
-├── scripts/                    # Dev/ops tooling
-│   ├── seed.ts                 # Testnet data generation script
-│   └── package.json
 ├── contracts.json              # Deployed contract addresses per network
 ├── DEPLOYMENTS.md              # Record of deployed contracts + tx hashes
-├── SEEDING.md                  # Test data seeding documentation
 └── PRD.md                      # Product requirements document
 ```
 
@@ -118,25 +114,12 @@ npm run test:run
 npm run build
 ```
 
-### Seed Test Data
-
-After deploying contracts and updating `contracts.json`:
-
-```bash
-cd scripts
-npm install
-npx tsx seed.ts
-```
-
-This generates 55 testnet accounts (5 merchants, 50 consumers), registers merchant tokens, populates catalogs, mints tokens, executes swaps, and performs redemptions. See [SEEDING.md](./SEEDING.md) for details.
-
 ## Key Files
 
 | File | Purpose |
 |---|---|
 | [`contracts.json`](./contracts.json) | Deployed contract addresses (consumed by frontend and scripts) |
 | [`DEPLOYMENTS.md`](./DEPLOYMENTS.md) | Record of contract deployments and sample transaction hashes |
-| [`SEEDING.md`](./SEEDING.md) | Testnet account seeding documentation |
 | [`PRD.md`](./PRD.md) | Full product requirements document |
 
 ## CI/CD

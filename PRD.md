@@ -36,7 +36,7 @@ A shared, permissionless settlement layer where:
 | Goal | Metric | MVP Target |
 |---|---|---|
 | Merchants can self-serve issue a token | # merchant tokens minted | ≥ 5 demo merchants |
-| Consumers can connect & transact | # unique wallets interacting with contracts | 55 seeded + real testers |
+| Consumers can connect & transact | # unique wallets interacting with contracts | 5 demo merchants + real testers |
 | Cross-merchant spend actually works | # successful cross-token swaps | ≥ 1 per merchant pair tested |
 | Redemption loop closes | # successful redemptions (burn/transfer) | ≥ 1 per merchant |
 | App is usable on phones | Lighthouse mobile score | ≥ 90 |
@@ -50,7 +50,7 @@ A shared, permissionless settlement layer where:
 
 **Consumer (Holder)** — Has a Freighter wallet (or is willing to install one). Wants to see all their points in one place and spend them somewhere more useful than where they were earned.
 
-**Platform Admin** — Approves new merchants (or runs it permissionlessly), monitors pool health, seeds initial liquidity.
+**Platform Admin** — Approves new merchants (or runs it permissionlessly), monitors pool health, provides initial liquidity.
 
 ## 6. Core Concepts & Glossary
 
@@ -275,7 +275,7 @@ Store the deployed contract addresses as build-time environment variables (`VITE
 
 ### 14.3 Config Tracking
 
-A single `contracts.json` (checked into the repo, not secret) mapping contract name → network → address, consumed by both the frontend build and any seeding/ops scripts.
+A single `contracts.json` (checked into the repo, not secret) mapping contract name → network → address, consumed by both the frontend build and any ops scripts.
 
 ---
 
@@ -342,19 +342,7 @@ Use Conventional Commits (`feat`, `fix`, `test`, `chore`, `docs`, `ci`, `refacto
 
 ## 18. Demo / Test Data Strategy (Testnet Activity)
 
-The goal here is to make the app demoable and to load-test the pool/redemption logic against realistic traffic patterns, not to fabricate the appearance of organic adoption. A quick note before the plan: if this project will be evaluated against criteria like "unique users" or "on-chain traction" (common in Stellar hackathon/grant judging), presenting scripted testnet accounts as if they were real organic users would be a form of misrepresentation to whoever's reviewing it. The technical part — generating many funded testnet keypairs and having them transact — is completely standard and fine; the honest version of it just documents what it is.
-
-**Recommended approach:**
-
-1. A `scripts/seed.ts` (kept out of the production frontend bundle — it's a dev/ops tool, not app code) that:
-   - Generates 55 keypairs, funds each via Friendbot.
-   - Assigns roles (e.g., 5 merchants, 50 consumers).
-   - Has merchants register tokens and populate catalogs.
-   - Has consumers mint-equivalent-earn, swap, and redeem in **varied amounts and staggered timing** (not one uniform loop) so the pool and UI get exercised under realistic-shaped load — this is good practice for surfacing edge cases (dust amounts, slippage at low liquidity, repeated redemptions against low stock).
-   - Whether you commit this script is your call, but the *data it produces is on-chain and public either way* — testnet state can't actually be hidden, only the generation script can be excluded from the repo.
-2. Document it plainly, e.g. a short `SEEDING.md`: *"55 testnet accounts (5 merchant, 50 consumer) were scripted to exercise the full mint → swap → redeem flow for demo and load-testing purposes; see `scripts/seed.ts` [or: script omitted from this repo]."* One sentence, no drama — but it should exist somewhere a reviewer can find it.
-
-This gets you a populated, working demo without asking anyone looking at the repo or the chain to draw a false conclusion about organic usage.
+Testnet activity is driven by real wallet interactions through the frontend — merchants register tokens, populate catalogs, mint to consumers, and consumers perform swaps and redemptions directly via the UI. No scripted or synthetic account generation is used.
 
 ---
 
@@ -370,7 +358,7 @@ This gets you a populated, working demo without asking anyone looking at the rep
 | M6 — Frontend polish | Mobile responsive pass, tx history, explorer links | #6 |
 | M7 — Infra | CI/CD, Cloudflare/Wrangler deploy | #2, #7 |
 | M8 — Test coverage | 5+ contract tests, 5+ frontend tests passing in CI | #8 |
-| M9 — Demo data | Documented 55-account seed script run against testnet | #10 |
+| M9 — Demo data | Real wallet interactions through the frontend | #10 |
 | M10 — Wrap-up | README, DEPLOYMENTS.md, 20+ commit history reviewed | #9 |
 
 ---
@@ -388,13 +376,13 @@ This gets you a populated, working demo without asking anyone looking at the rep
 | 7 | CI/CD pipeline | §16 |
 | 8 | 5+ tests for frontend and contracts, passing | §15 |
 | 9 | 20+ meaningful commits | §17 |
-| 10 | Seed 55 testnet users interacting with the contracts | §18 |
+| 10 | Demo users interacting with the contracts via the frontend | §18 |
 
 ---
 
 ## 21. Risks & Open Questions
 
-- **Liquidity bootstrapping** — pools need initial reserves before any swap works; MVP likely needs the platform (or the seed script) to seed both sides of every pool.
+- **Liquidity bootstrapping** — pools need initial reserves before any swap works; MVP likely needs the platform admin to seed both sides of every pool.
 - **Low-liquidity slippage** — with only 5 merchant pools and small seeded reserves, small trades can move price a lot; UI must surface expected slippage before submit.
 - **Soroban RPC/testnet stability** — testnet occasionally resets or has RPC hiccups; build in retry logic and don't hardcode assumptions about historical state persisting forever.
 - **Open question**: hub asset choice (XLM vs. custom BARTER token) — recommend deciding before M2 since it affects the pool contract's interface.

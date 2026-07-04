@@ -1,8 +1,0 @@
-{
-  "name": "barternet-scripts",
-  "private": true,
-  "type": "module",
-  "dependencies": {
-    "@stellar/stellar-sdk": "^13.1.0"
-  }
-}

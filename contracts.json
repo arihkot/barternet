@@ -1,0 +1,9 @@
+{
+  "networks": {
+    "testnet": {
+      "token_factory": "",
+      "barter_pool": "",
+      "redemption_registry": ""
+    }
+  }
+}

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import { useWallet } from "../context/WalletContext";
-import { buildAndSimulate, submitSigned, explorerLink } from "../lib/stellar";
+import { buildAndSimulate, submitSigned, explorerLink, getRedemptionAddress } from "../lib/stellar";
 import RedemptionCatalog from "../components/RedemptionCatalog";
 
 vi.mock("../context/WalletContext", () => ({
@@ -15,6 +15,7 @@ vi.mock("../lib/stellar", () => ({
   scvAddress: vi.fn(),
   scvI128: vi.fn(),
   scvU32: vi.fn(),
+  getRedemptionAddress: vi.fn(() => "GBRED1234567890ABCDEFGHIJKLMNOPQRSTUV"),
 }));
 
 vi.mock("@stellar/stellar-sdk", () => ({

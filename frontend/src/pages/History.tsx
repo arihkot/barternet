@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useWallet } from "../context/WalletContext";
-import { getRpc, explorerLink } from "../lib/stellar";
+import { explorerLink } from "../lib/stellar";
 
 interface TxEntry {
   hash: string;
@@ -8,6 +8,8 @@ interface TxEntry {
   timestamp: string;
   ledger: number;
 }
+
+const HORIZON_URL = "https://horizon-testnet.stellar.org";
 
 export default function History() {
   const { connected, publicKey } = useWallet();
@@ -23,22 +25,22 @@ export default function History() {
     setLoading(true);
     setError(null);
     try {
-      const server = getRpc();
-      const latestLedger = await server.getLatestLedger();
-
-      const startLedger = Math.max(1, latestLedger.sequence - 500);
-      const resp = await server.getTransactions({
-        startLedger,
-        limit: 20,
+      const url = `${HORIZON_URL}/accounts/${publicKey}/transactions?limit=20&order=desc`;
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch transactions: ${response.statusText}`);
+      }
+      const data = await response.json();
+      const entries: TxEntry[] = (data._embedded?.records ?? []).map((tx: any) => {
+        let type = tx.source_account === publicKey ? "Sent" : "Received";
+        if (tx.operation_count > 1) type = "Contract Call";
+        return {
+          hash: tx.hash,
+          type,
+          timestamp: new Date(tx.created_at).toLocaleString(),
+          ledger: tx.ledger,
+        };
       });
-
-      const entries: TxEntry[] = resp.transactions.map((tx) => ({
-        hash: tx.txHash,
-        type: tx.feeBump ? "Fee Bump" : "Contract Call",
-        timestamp: new Date(Number(tx.createdAt) * 1000).toLocaleString(),
-        ledger: tx.ledger,
-      }));
-
       setTransactions(entries);
     } catch (e: any) {
       setError(e.message || "Failed to load transaction history");
@@ -83,7 +85,7 @@ export default function History() {
       {!loading && !error && transactions.length === 0 && (
         <div className="card text-center py-8">
           <p className="text-gray-500">
-            No recent transactions found on the network.
+            No transactions found for this wallet.
           </p>
         </div>
       )}

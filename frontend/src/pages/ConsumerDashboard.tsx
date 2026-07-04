@@ -4,6 +4,7 @@ import { scValToNative } from "@stellar/stellar-sdk";
 import { useWallet } from "../context/WalletContext";
 import { buildAndSimulate, scvAddress, getFactoryAddress } from "../lib/stellar";
 import SwapWidget from "../components/SwapWidget";
+import LiquidityPanel from "../components/LiquidityPanel";
 
 const FACTORY = getFactoryAddress();
 
@@ -162,6 +163,10 @@ export default function ConsumerDashboard() {
             different merchants.
           </p>
         </div>
+      )}
+
+      {balances.length >= 1 && (
+        <LiquidityPanel balances={balances} />
       )}
     </div>
   );

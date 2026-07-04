@@ -6,6 +6,13 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import {
+  isConnected,
+  getAddress,
+  getNetwork,
+  requestAccess,
+  signTransaction as freighterSignTx,
+} from "@stellar/freighter-api";
 
 interface WalletState {
   connected: boolean;
@@ -23,23 +30,6 @@ const WalletContext = createContext<WalletContextType | null>(null);
 
 const TESTNET_PASSPHRASE = "Test SDF Network ; September 2015";
 
-interface FreighterAPI {
-  isConnected: () => Promise<boolean>;
-  getAddress: () => Promise<{ address: string }>;
-  getNetwork: () => Promise<string>;
-  signTransaction: (
-    xdr: string,
-    opts?: { networkPassphrase?: string }
-  ) => Promise<{ signedTxXdr: string }>;
-}
-
-function getFreighter(): FreighterAPI | null {
-  if (typeof window !== "undefined" && (window as any).freighterApi) {
-    return (window as any).freighterApi as FreighterAPI;
-  }
-  return null;
-}
-
 export function WalletProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<WalletState>({
     connected: false,
@@ -48,13 +38,17 @@ export function WalletProvider({ children }: { children: ReactNode }) {
   });
 
   useEffect(() => {
-    const api = getFreighter();
-    if (!api) return;
-    api.isConnected().then((connected) => {
-      if (connected) {
-        Promise.all([api.getAddress(), api.getNetwork()]).then(
+    isConnected().then(({ isConnected: connected, error }) => {
+      if (connected && !error) {
+        Promise.all([getAddress(), getNetwork()]).then(
           ([addr, net]) => {
-            setState({ connected: true, publicKey: addr.address, network: net });
+            if (!addr.error && !net.error) {
+              setState({
+                connected: true,
+                publicKey: addr.address,
+                network: net.network,
+              });
+            }
           }
         );
       }
@@ -62,14 +56,18 @@ export function WalletProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const connect = useCallback(async () => {
-    const api = getFreighter();
-    if (!api) throw new Error("Freighter wallet not installed");
-    const addr = await api.getAddress();
-    const net = await api.getNetwork();
-    if (net !== "TESTNET" && net !== TESTNET_PASSPHRASE) {
+    const { error: accessError } = await requestAccess();
+    if (accessError) throw new Error(accessError);
+
+    const addr = await getAddress();
+    if (addr.error) throw new Error(addr.error);
+    const net = await getNetwork();
+    if (net.error) throw new Error(net.error);
+
+    if (net.network !== "TESTNET" && net.networkPassphrase !== TESTNET_PASSPHRASE) {
       throw new Error("Please switch Freighter to Testnet");
     }
-    setState({ connected: true, publicKey: addr.address, network: net });
+    setState({ connected: true, publicKey: addr.address, network: net.network });
   }, []);
 
   const disconnect = useCallback(async () => {
@@ -77,11 +75,10 @@ export function WalletProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signTransaction = useCallback(async (xdr: string): Promise<string> => {
-    const api = getFreighter();
-    if (!api) throw new Error("Freighter wallet not installed");
-    const result = await api.signTransaction(xdr, {
+    const result = await freighterSignTx(xdr, {
       networkPassphrase: TESTNET_PASSPHRASE,
     });
+    if (result.error) throw new Error(result.error);
     return result.signedTxXdr;
   }, []);
 

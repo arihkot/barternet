@@ -10,6 +10,9 @@ BarterNet lets independent small merchants each mint their own loyalty token, wh
 2. **Liquidity** — Every merchant token is paired against a common hub asset (native XLM) in a constant-product AMM, so any token can be swapped into any other token in one atomic routed transaction.
 3. **Redemption** — Merchants publish a redemption catalog (item → price in their own token); consumers redeem directly on-chain, and the contract enforces stock and transfers tokens atomically.
 
+## Pitch Deck
+https://drive.google.com/file/d/1vDLosqYKj7OD_qFthN2C0Nne97CQmQD_/view?usp=sharing
+
 ## Tech Stack
 
 | Layer | Technology |

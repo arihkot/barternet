@@ -9,10 +9,12 @@ import {
   scvI128,
   scvU32,
   scvString,
+  getFactoryAddress,
+  getRedemptionAddress,
 } from "../lib/stellar";
 
-const FACTORY = import.meta.env.VITE_TOKEN_FACTORY_ADDRESS;
-const REDEMPTION = import.meta.env.VITE_REDEMPTION_REGISTRY_ADDRESS;
+const FACTORY = getFactoryAddress();
+const REDEMPTION = getRedemptionAddress();
 
 type Tab = "register" | "mint" | "catalog";
 
@@ -30,6 +32,16 @@ export default function MerchantDashboard() {
     return (
       <div className="card text-center space-y-4 py-12">
         <p className="text-gray-400">Connect your Freighter wallet to access the merchant dashboard.</p>
+      </div>
+    );
+  }
+
+  if (!FACTORY || !REDEMPTION) {
+    return (
+      <div className="card text-center space-y-4 py-12">
+        <p className="text-gray-400">
+          Contracts not yet deployed. Update contracts.json and rebuild.
+        </p>
       </div>
     );
   }

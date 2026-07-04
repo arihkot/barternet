@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { useWallet } from "../context/WalletContext";
-import { buildAndSimulate, submitSigned, explorerLink } from "../lib/stellar";
+import { buildAndSimulate, submitSigned, explorerLink, getPoolAddress } from "../lib/stellar";
 import SwapWidget from "../components/SwapWidget";
 
 vi.mock("../context/WalletContext", () => ({
@@ -14,6 +14,7 @@ vi.mock("../lib/stellar", () => ({
   explorerLink: vi.fn(),
   scvAddress: vi.fn(),
   scvI128: vi.fn(),
+  getPoolAddress: vi.fn(() => "GBPOOL1234567890ABCDEFGHIJKLMNOPQRSTUV"),
 }));
 
 vi.mock("@stellar/stellar-sdk", () => ({

@@ -54,6 +54,16 @@ barternet/
 └── PRD.md                      # Product requirements document
 ```
 
+## Deployed Contract Addresses (Testnet)
+
+| Contract | Address | Explorer |
+|---|---|---|
+| token_factory | `CCKP22DFS7IBH3XR2KHFOUJJGCKLL4BHQR2M5DV7RFJUTZ7FMTKFKQ7V` | [Lab](https://lab.stellar.org/r/testnet/contract/CCKP22DFS7IBH3XR2KHFOUJJGCKLL4BHQR2M5DV7RFJUTZ7FMTKFKQ7V) |
+| barter_pool | `CBZXL3U4TMXMKO5HVQJJ76GK6LKSPIQLMSHT33CGYQOOC4TJEZKBIGAS` | [Lab](https://lab.stellar.org/r/testnet/contract/CBZXL3U4TMXMKO5HVQJJ76GK6LKSPIQLMSHT33CGYQOOC4TJEZKBIGAS) |
+| redemption_registry | `CCDZ76SKGKV4VTHSJ7ZW4725KKPIFN3Y5TMELKFOQQSPCJ7FGE2HFGJD` | [Lab](https://lab.stellar.org/r/testnet/contract/CCDZ76SKGKV4VTHSJ7ZW4725KKPIFN3Y5TMELKFOQQSPCJ7FGE2HFGJD) |
+
+Admin: `GAWDC6WWRG4M57V2SOFHJE3T56ZSQVD3Z4O32WMRPK6BK5E6WWRG5DR5`
+
 ## Quick Start
 
 ### Prerequisites

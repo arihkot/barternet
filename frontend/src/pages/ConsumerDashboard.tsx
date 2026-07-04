@@ -2,10 +2,10 @@ import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { scValToNative } from "@stellar/stellar-sdk";
 import { useWallet } from "../context/WalletContext";
-import { buildAndSimulate, scvAddress } from "../lib/stellar";
+import { buildAndSimulate, scvAddress, getFactoryAddress } from "../lib/stellar";
 import SwapWidget from "../components/SwapWidget";
 
-const FACTORY = import.meta.env.VITE_TOKEN_FACTORY_ADDRESS;
+const FACTORY = getFactoryAddress();
 
 interface Balance {
   tokenAddress: string;
@@ -78,6 +78,16 @@ export default function ConsumerDashboard() {
       <div className="card text-center space-y-4 py-12">
         <p className="text-gray-400">
           Connect your Freighter wallet to view your balances and swap tokens.
+        </p>
+      </div>
+    );
+  }
+
+  if (!FACTORY) {
+    return (
+      <div className="card text-center space-y-4 py-12">
+        <p className="text-gray-400">
+          Contracts not yet deployed. Update contracts.json and rebuild.
         </p>
       </div>
     );

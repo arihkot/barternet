@@ -8,9 +8,10 @@ import {
   scvAddress,
   scvI128,
   scvU32,
+  getRedemptionAddress,
 } from "../lib/stellar";
 
-const REDEMPTION = import.meta.env.VITE_REDEMPTION_REGISTRY_ADDRESS;
+const REDEMPTION = getRedemptionAddress();
 
 interface CatalogItem {
   item_id: number;

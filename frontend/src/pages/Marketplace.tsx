@@ -1,10 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
 import { scValToNative } from "@stellar/stellar-sdk";
 import { useWallet } from "../context/WalletContext";
-import { buildAndSimulate } from "../lib/stellar";
+import { buildAndSimulate, getFactoryAddress } from "../lib/stellar";
 import RedemptionCatalog from "../components/RedemptionCatalog";
 
-const FACTORY = import.meta.env.VITE_TOKEN_FACTORY_ADDRESS;
+const FACTORY = getFactoryAddress();
 
 interface Merchant {
   merchant: string;
@@ -50,6 +50,29 @@ export default function Marketplace() {
   useEffect(() => {
     fetchMerchants();
   }, [fetchMerchants]);
+
+  if (!FACTORY) {
+    return (
+      <div className="space-y-6">
+        <h1 className="text-2xl font-bold">Marketplace</h1>
+        <div className="card text-center py-12 space-y-3">
+          <p className="text-gray-400 text-lg">Contracts not yet deployed</p>
+          <p className="text-gray-500 text-sm">
+            Deploy the contracts to Stellar testnet and update{" "}
+            <code className="bg-gray-800 px-1.5 py-0.5 rounded text-brand-light text-xs">contracts.json</code>{" "}
+            with the deployed addresses to enable the marketplace.
+          </p>
+          <p className="text-gray-600 text-xs">
+            See{" "}
+            <a href="https://github.com/arihkot/barternet/blob/main/DEPLOYMENTS.md" className="text-brand-light hover:underline" target="_blank" rel="noreferrer">
+              DEPLOYMENTS.md
+            </a>{" "}
+            for instructions.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   const filtered = merchants.filter(
     (m) =>

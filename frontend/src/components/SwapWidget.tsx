@@ -7,9 +7,10 @@ import {
   explorerLink,
   scvAddress,
   scvI128,
+  getPoolAddress,
 } from "../lib/stellar";
 
-const POOL = import.meta.env.VITE_BARTER_POOL_ADDRESS;
+const POOL = getPoolAddress();
 
 interface Balance {
   tokenAddress: string;

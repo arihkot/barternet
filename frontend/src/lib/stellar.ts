@@ -37,12 +37,28 @@ export function scvSymbol(s: string) {
 
 export type SimResult = rpc.Api.SimulateTransactionSuccessResponse | rpc.Api.SimulateTransactionRestoreResponse;
 
+export function getFactoryAddress() {
+  return (import.meta as any).env?.VITE_TOKEN_FACTORY_ADDRESS || "";
+}
+export function getPoolAddress() {
+  return (import.meta as any).env?.VITE_BARTER_POOL_ADDRESS || "";
+}
+export function getRedemptionAddress() {
+  return (import.meta as any).env?.VITE_REDEMPTION_REGISTRY_ADDRESS || "";
+}
+export function areContractsConfigured() {
+  return !!(getFactoryAddress() && getPoolAddress() && getRedemptionAddress());
+}
+
 export async function buildAndSimulate(
   sourcePublicKey: string,
   contractId: string,
   method: string,
   args: xdr.ScVal[] = []
 ): Promise<{ tx: Transaction; sim: SimResult }> {
+  if (!contractId) {
+    throw new Error("Contract not configured — deploy contracts and update contracts.json");
+  }
   const server = getRpc();
   const source = await server.getAccount(sourcePublicKey).catch(() => {
     throw new Error("Account not found. Fund it via Friendbot first.");

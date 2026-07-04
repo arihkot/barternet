@@ -1,9 +1,9 @@
 {
   "networks": {
     "testnet": {
-      "token_factory": "",
-      "barter_pool": "",
-      "redemption_registry": ""
+      "token_factory": "CCKP22DFS7IBH3XR2KHFOUJJGCKLL4BHQR2M5DV7RFJUTZ7FMTKFKQ7V",
+      "barter_pool": "CBZXL3U4TMXMKO5HVQJJ76GK6LKSPIQLMSHT33CGYQOOC4TJEZKBIGAS",
+      "redemption_registry": "CCDZ76SKGKV4VTHSJ7ZW4725KKPIFN3Y5TMELKFOQQSPCJ7FGE2HFGJD"
     }
   }
 }

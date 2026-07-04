@@ -11,6 +11,22 @@ interface TxEntry {
 
 const HORIZON_URL = "https://horizon-testnet.stellar.org";
 
+const OP_LABELS: Record<string, string> = {
+  invoke_host_function: "Contract Call",
+  payment: "Payment",
+  create_account: "Create Account",
+  manage_sell_offer: "DEX Trade",
+  path_payment_strict_send: "Path Payment",
+  path_payment_strict_receive: "Path Payment",
+  change_trust: "Trust Line",
+  clawback: "Clawback",
+  set_options: "Account Config",
+};
+
+function classifyOpType(operation: any): string {
+  return OP_LABELS[operation.type] ?? operation.type ?? "Unknown";
+}
+
 export default function History() {
   const { connected, publicKey } = useWallet();
   const [transactions, setTransactions] = useState<TxEntry[]>([]);
@@ -25,22 +41,33 @@ export default function History() {
     setLoading(true);
     setError(null);
     try {
-      const url = `${HORIZON_URL}/accounts/${publicKey}/transactions?limit=20&order=desc`;
+      const url = `${HORIZON_URL}/accounts/${publicKey}/operations?limit=30&order=desc&join=transactions`;
       const response = await fetch(url);
       if (!response.ok) {
-        throw new Error(`Failed to fetch transactions: ${response.statusText}`);
+        throw new Error(`Failed to fetch history: ${response.statusText}`);
       }
       const data = await response.json();
-      const entries: TxEntry[] = (data._embedded?.records ?? []).map((tx: any) => {
-        let type = tx.source_account === publicKey ? "Sent" : "Received";
-        if (tx.operation_count > 1) type = "Contract Call";
-        return {
-          hash: tx.hash,
+      const records: any[] = data._embedded?.records ?? [];
+
+      const seen = new Set<string>();
+      const entries: TxEntry[] = [];
+      for (const op of records) {
+        const hash = op.transaction_hash;
+        if (!hash || seen.has(hash)) continue;
+        seen.add(hash);
+
+        const type = op.transaction_successful
+          ? classifyOpType(op)
+          : `Failed: ${classifyOpType(op)}`;
+
+        entries.push({
+          hash,
           type,
-          timestamp: new Date(tx.created_at).toLocaleString(),
-          ledger: tx.ledger,
-        };
-      });
+          timestamp: new Date(op.created_at).toLocaleString(),
+          ledger: op.transaction?.ledger ?? 0,
+        });
+      }
+
       setTransactions(entries);
     } catch (e: any) {
       setError(e.message || "Failed to load transaction history");
@@ -98,7 +125,13 @@ export default function History() {
               className="card flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4"
             >
               <div className="flex items-center gap-3">
-                <span className="text-xs px-2 py-1 rounded bg-gray-800 text-gray-300 font-medium">
+                <span
+                  className={`text-xs px-2 py-1 rounded font-medium ${
+                    tx.type.startsWith("Failed")
+                      ? "bg-red-900/50 text-red-400"
+                      : "bg-gray-800 text-gray-300"
+                  }`}
+                >
                   {tx.type}
                 </span>
                 <div>

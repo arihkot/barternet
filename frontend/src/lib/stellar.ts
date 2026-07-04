@@ -10,6 +10,28 @@ import {
 } from "@stellar/stellar-sdk";
 
 const RPC_URL = "https://soroban-testnet.stellar.org";
+const MAX_RETRIES = 3;
+const BASE_DELAY_MS = 1000;
+
+async function retryWithBackoff<T>(
+  fn: () => Promise<T>,
+  label: string
+): Promise<T> {
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      return await fn();
+    } catch (e: any) {
+      if (attempt < MAX_RETRIES) {
+        const delay = BASE_DELAY_MS * Math.pow(2, attempt);
+        console.warn(`[RPC] ${label} attempt ${attempt + 1} failed, retrying in ${delay}ms: ${e.message}`);
+        await new Promise((r) => setTimeout(r, delay));
+        continue;
+      }
+      throw e;
+    }
+  }
+  throw new Error("unreachable");
+}
 
 export function getRpc(): rpc.Server {
   return new rpc.Server(RPC_URL, { allowHttp: true });
@@ -60,7 +82,10 @@ export async function buildAndSimulate(
     throw new Error("Contract not configured — deploy contracts and update contracts.json");
   }
   const server = getRpc();
-  const source = await server.getAccount(sourcePublicKey).catch(() => {
+  const source = await retryWithBackoff(
+    () => server.getAccount(sourcePublicKey),
+    "getAccount"
+  ).catch(() => {
     throw new Error("Account not found. Fund it via Friendbot first.");
   });
 
@@ -73,7 +98,10 @@ export async function buildAndSimulate(
     .setTimeout(30)
     .build();
 
-  const sim = await server.simulateTransaction(tx);
+  const sim = await retryWithBackoff(
+    () => server.simulateTransaction(tx),
+    "simulateTransaction"
+  );
   if (rpc.Api.isSimulationError(sim)) {
     throw new Error(`Simulation failed: ${sim.error}`);
   }
@@ -90,7 +118,10 @@ export async function submitSigned(
   const signedXdr = assembleTx.build().toXDR();
   const signed = await signFn(signedXdr);
   const txToSubmit = TransactionBuilder.fromXDR(signed, Networks.TESTNET);
-  const result = await server.sendTransaction(txToSubmit);
+  const result = await retryWithBackoff(
+    () => server.sendTransaction(txToSubmit),
+    "sendTransaction"
+  );
 
   if (result.status === "ERROR") {
     throw new Error(`Transaction failed: ${JSON.stringify(result)}`);
@@ -98,7 +129,10 @@ export async function submitSigned(
 
   let hash = result.hash;
   for (let i = 0; i < 30; i++) {
-    const txResult = await server.getTransaction(hash);
+    const txResult = await retryWithBackoff(
+      () => server.getTransaction(hash),
+      "getTransaction"
+    );
     if (txResult.status === rpc.Api.GetTransactionStatus.SUCCESS) {
       return hash;
     }

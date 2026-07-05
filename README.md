@@ -4,6 +4,35 @@
 
 BarterNet lets independent small merchants each mint their own loyalty token, while letting consumers spend those points **outside** the business that issued them. A customer earns "Coffee Points" at a cafe and can redeem a discount at the bookstore next door — because BarterNet routes the exchange through an on-chain hub-and-spoke AMM instead of bilateral partnership agreements.
 
+## Deployed URL
+https://barternet.pages.dev
+
+## Demo
+<img width="1470" height="956" alt="Screenshot 2026-07-05 at 1 55 44 PM" src="https://github.com/user-attachments/assets/cf534bb3-6d38-44c9-b6b9-a5c4539f020c" />
+<img width="1582" height="1035" alt="Screenshot 2026-07-05 at 1 54 47 PM" src="https://github.com/user-attachments/assets/812e43f1-728c-40cf-a560-5307291afe2d" />
+<img width="1582" height="1035" alt="Screenshot 2026-07-05 at 1 54 41 PM" src="https://github.com/user-attachments/assets/6194f810-50ab-4333-8c73-90b6167b9328" />
+<img width="1582" height="1035" alt="Screenshot 2026-07-05 at 1 54 36 PM" src="https://github.com/user-attachments/assets/04101d0a-a3e5-4f0a-877e-6bd109b7e5dc" />
+<img width="1582" height="1035" alt="Screenshot 2026-07-05 at 1 54 32 PM" src="https://github.com/user-attachments/assets/a1b67806-e8f3-40ed-a0d9-cc3642c38058" />
+<img width="1582" height="1035" alt="Screenshot 2026-07-05 at 1 45 06 PM" src="https://github.com/user-attachments/assets/3d398c5b-d912-48c7-8667-328cc950167d" />
+
+## Mobile Responsive
+<img width="338" height="724" alt="Screenshot 2026-07-05 at 8 18 10 PM" src="https://github.com/user-attachments/assets/a34bda83-b267-4dae-9bcf-65130940d470" />
+<img width="338" height="724" alt="Screenshot 2026-07-05 at 8 17 49 PM" src="https://github.com/user-attachments/assets/3180c032-ab3e-4daa-b8d5-5fa35a88bdcf" />
+<img width="338" height="724" alt="Screenshot 2026-07-05 at 8 17 44 PM" src="https://github.com/user-attachments/assets/8f27c515-112d-41f6-b881-11f809681c2a" />
+<img width="338" height="724" alt="Screenshot 2026-07-05 at 8 16 44 PM" src="https://github.com/user-attachments/assets/15525359-48d0-4d58-bb4e-925056b3b341" />
+
+## CI/CD
+<img width="1582" height="1035" alt="Screenshot 2026-07-05 at 8 21 11 PM" src="https://github.com/user-attachments/assets/56e5c979-e1fa-47a5-aa33-96338755899e" />
+
+
+## Tests
+<img width="1372" height="560" alt="image" src="https://github.com/user-attachments/assets/8bdb5cdd-9365-4728-a09a-2851e3de25fc" />
+<img width="2608" height="1586" alt="image" src="https://github.com/user-attachments/assets/4ea2fb60-31bf-4e26-9986-308646a407c5" />
+
+
+## Demo Video
+https://drive.google.com/file/d/1-0Zz936myHK5V8nY1-0LuUpi72w-tQ5q/view?usp=sharing
+
 ## How It Works
 
 1. **Issuance** — Merchants mint a branded fungible token (SEP-41) through a factory contract, with zero smart-contract code to write themselves.

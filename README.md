@@ -42,6 +42,25 @@ https://drive.google.com/file/d/1-0Zz936myHK5V8nY1-0LuUpi72w-tQ5q/view?usp=shari
 ## Pitch Deck
 https://drive.google.com/file/d/1vDLosqYKj7OD_qFthN2C0Nne97CQmQD_/view?usp=sharing
 
+## Wallet Integration
+
+The frontend connects to the [Freighter](https://freighter.app) browser extension using [`@stellar/freighter-api`](https://www.npmjs.com/package/@stellar/freighter-api). The integration is implemented in the following files:
+
+| File | Purpose |
+|---|---|
+| [`frontend/src/lib/wallet.ts`](./frontend/src/lib/wallet.ts) | Low-level Freighter API wrapper: `isWalletInstalled`, `requestWalletAccess`, `getWalletAddress`, `getWalletNetwork`, and `signWalletTransaction` |
+| [`frontend/src/context/WalletContext.tsx`](./frontend/src/context/WalletContext.tsx) | React context that exposes `connect`, `disconnect`, and `signTransaction` to the rest of the app |
+| [`frontend/src/components/WalletButton.tsx`](./frontend/src/components/WalletButton.tsx) | Connect/disconnect button rendered in the navbar |
+| [`frontend/src/test/wallet.test.ts`](./frontend/src/test/wallet.test.ts) | Unit tests for the wallet service |
+| [`frontend/src/test/WalletButton.test.tsx`](./frontend/src/test/WalletButton.test.tsx) | Component tests for the connect button |
+
+### Freighter Permissions & Flow
+
+- **Connection / authorization**: `requestAccess()` prompts the user to authorize the dApp. This is the modern Freighter API v4.0+ replacement for the deprecated `setAllowed` flow.
+- **Address retrieval**: `getAddress()` returns the active Stellar public key.
+- **Network enforcement**: `getNetwork()` is read after connection and the app rejects non-Testnet networks.
+- **Transaction signing**: `signTransaction(xdr, { networkPassphrase })` is called after a Soroban transaction is simulated and assembled, producing a signed XDR ready for submission.
+
 ## Tech Stack
 
 | Layer | Technology |
@@ -77,7 +96,7 @@ barternet/
 │   ├── src/
 │   │   ├── components/         # Reusable UI components
 │   │   ├── pages/              # Route-level pages
-│   │   ├── lib/                # Stellar RPC helpers, contract wrappers
+│   │   ├── lib/                # Stellar RPC helpers, contract wrappers, wallet service
 │   │   ├── context/            # React context (wallet, etc.)
 │   │   └── test/               # Frontend test setup
 │   └── package.json
@@ -163,6 +182,10 @@ npm run build
 | [`contracts.json`](./contracts.json) | Deployed contract addresses (consumed by frontend and scripts) |
 | [`DEPLOYMENTS.md`](./DEPLOYMENTS.md) | Record of contract deployments and sample transaction hashes |
 | [`PRD.md`](./PRD.md) | Full product requirements document |
+| [`frontend/src/lib/wallet.ts`](./frontend/src/lib/wallet.ts) | Freighter wallet service wrapper |
+| [`frontend/src/context/WalletContext.tsx`](./frontend/src/context/WalletContext.tsx) | Wallet React context |
+| [`frontend/src/components/WalletButton.tsx`](./frontend/src/components/WalletButton.tsx) | Connect wallet UI button |
+| [`frontend/src/test/wallet.test.ts`](./frontend/src/test/wallet.test.ts) | Wallet service unit tests |
 
 ## CI/CD
 
